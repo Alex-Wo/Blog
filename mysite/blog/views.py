@@ -2,6 +2,7 @@
 
 from django.shortcuts import render, get_object_or_404
 from .models import Post
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 def post_list(request):
@@ -14,7 +15,18 @@ def post_list(request):
         со сформированным текстом (обычно это HTML - код).
     """
     posts = Post.published.all()
-    return render(request, 'blog/post/list.html', {'posts': posts})
+    #  Импортируем классы-пагинаторы из Django, для постраничного отображения постов
+    objects_list = Post.published.all()
+    paginator = Paginator(objects_list, 3)  # Отображение по три поста на странице
+    page = request.GET.get('page')
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        posts = paginator.page(1)  # Если страница не является целым числом - возвращаем первую страницу
+    except EmptyPage:
+        posts = paginator.page(
+            paginator.num_pages)  # Если номер страницы больше общего количества страниц - возвращаем последнюю
+    return render(request, 'post/list.html', {'page': page, 'posts': posts})
 
 
 def post_detail(request, year, month, day, post):
@@ -30,4 +42,4 @@ def post_detail(request, year, month, day, post):
     """
     post = get_object_or_404(Post, slug=post, status='published', publish__year=year, publish__month=month,
                              publish__day=day)
-    return render(request, 'blog/post/detail.html', {'post': post})
+    return render(request, 'post/detail.html', {'post': post})
