@@ -26,8 +26,8 @@ class PublishedManager(models.Manager):
 
 class Post(models.Model):
     STATUS_CHOICES = (
-        ('draft', 'Draft'),
-        ('published', 'Published'),
+        ('draft', 'Отложено'),
+        ('published', 'Опубликовано'),
     )
     title = models.CharField(max_length=250)  # Поле заголовка статьи. Тип VARCHAR в базе данных
     slug = models.SlugField(max_length=250, unique_for_date='publish')  # Поле для формирования URL'ов

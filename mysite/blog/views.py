@@ -1,5 +1,5 @@
 # Вся логика приложения описывается здесь. Каждый обработчик получает HTTP-запрос, обрабатывает его и получает ответ.
-
+from django.core.mail import send_mail
 from django.shortcuts import render, get_object_or_404
 from .models import Post
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -18,14 +18,14 @@ def post_share(request, post_id):
         form = EmailPostForm(request.POST)  # Форма была отправлена на сохранение
         if form.is_valid():  # Все поля формы прошли валидацию
             cd = form.cleaned_data
-            post_url = request.build_absolute_url(post.get_absolute_url())
-            subject = '{} ({}) recommends you reading "{}" '.format(cd['name'], cd['email'], post.title)
+            post_url = request.build_absolute_uri(post.get_absolute_url())
+            subject = '{} ({}) рекомендует вам прочитать "{}"'.format(cd['name'], cd['email'], post.title)
             message = 'Read "{}" at {}\n\n{}\'s comments: {}'.format(post.title, post_url, cd['name'], cd['comments'])
             send_mail(subject, message, 'admin@myblog.com', [cd['to']])
             sent = True
-        else:                           # Отправка электронной почты
-            form = EmailPostForm()
-            return render(request, 'blog/post/share.html', {'post': post, 'form': form, 'sent': sent})
+    else:  # Отправка электронной почты
+        form = EmailPostForm()
+    return render(request, 'post/share.html', {'post': post, 'form': form, 'sent': sent})
 
 
 def post_list(request):
@@ -57,7 +57,7 @@ def post_list(request):
 # 2. Извлекаем из запроса GET-параметр 'page', который указывает текущую страницу;
 # 3. Получаем список объектов на нужной странице с помощью метода 'page()' класса Paginator;
 # 4. Если указанный параметр 'page' не является целым числом, обращаемся к первой странице. Если 'page' больше, чем общее
-# количество страниц - возвращаем последнюю;
+# количество страниц — возвращаем последнюю;
 # 5. Передаём номер страницы и полученные объекты в шаблон.
 
 
