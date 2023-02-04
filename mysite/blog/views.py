@@ -3,6 +3,29 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Post
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from .forms import EmailPostForm
+
+
+def post_share(request, post_id):
+    """
+        Обработчик для получения данных формы и отправки их на почту, при условии, что они корректны. Для отображения
+        пустой формы и обработки введённых данных, используется один и тот же обработчик. Для разделения логики
+        отображения формы или её обработки, используется запрос request. Список полей с ошибками смотрим в form.errors
+    """
+    post = get_object_or_404(Post, id=post_id, status='published')  # Получение статьи по идентификатору
+    sent = False
+    if request.method == 'POST':
+        form = EmailPostForm(request.POST)  # Форма была отправлена на сохранение
+        if form.is_valid():  # Все поля формы прошли валидацию
+            cd = form.cleaned_data
+            post_url = request.build_absolute_url(post.get_absolute_url())
+            subject = '{} ({}) recommends you reading "{}" '.format(cd['name'], cd['email'], post.title)
+            message = 'Read "{}" at {}\n\n{}\'s comments: {}'.format(post.title, post_url, cd['name'], cd['comments'])
+            send_mail(subject, message, 'admin@myblog.com', [cd['to']])
+            sent = True
+        else:                           # Отправка электронной почты
+            form = EmailPostForm()
+            return render(request, 'blog/post/share.html', {'post': post, 'form': form, 'sent': sent})
 
 
 def post_list(request):
@@ -14,7 +37,7 @@ def post_list(request):
         запроса request, путь к шаблону и переменные контекста для этого шаблона. В ответ вернётся объект HttpResponse
         со сформированным текстом (обычно это HTML - код).
     """
-    posts = Post.published.all()
+    # posts = Post.published.all()
     #  Импортируем классы-пагинаторы из Django, для постраничного отображения постов
     objects_list = Post.published.all()
     paginator = Paginator(objects_list, 3)  # Отображение по три поста на странице

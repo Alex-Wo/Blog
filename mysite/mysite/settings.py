@@ -132,3 +132,15 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Используется при тестировании приложения без подключения к SMTP-серверу
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # !!!
+
+# Эта конфигурация, позволяет отправлять сообщения, используя сервер провайдера Gmail (например)
+
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = os.getenv('EMAIL_PORT')
+EMAIL_USE_TLS = True
