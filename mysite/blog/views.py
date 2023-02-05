@@ -4,6 +4,7 @@ from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Post, Comment
 from .forms import EmailPostForm, CommentForm
+from taggit.models import Tag
 
 
 def post_share(request, post_id):
@@ -28,7 +29,7 @@ def post_share(request, post_id):
     return render(request, 'post/share.html', {'post': post, 'form': form, 'sent': sent})
 
 
-def post_list(request):
+def post_list(request, tag_slug=None):
     """
         Создаём обработчик post_list. Он получает объект request в качестве аргумента и является обязательным для всех
         обработчиков. В этой функции мы запрашиваем из базы данных все опубликованные статьи с помощью менеджера
@@ -40,6 +41,11 @@ def post_list(request):
     # posts = Post.published.all()
     #  Импортируем классы-пагинаторы из Django, для постраничного отображения постов
     objects_list = Post.published.all()
+    tag = None
+
+    if tag_slug:
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        objects_list = objects_list.filter(tags__in=[tag])
     paginator = Paginator(objects_list, 3)  # Отображение по три поста на странице
     page = request.GET.get('page')
     try:
@@ -49,7 +55,7 @@ def post_list(request):
     except EmptyPage:
         posts = paginator.page(
             paginator.num_pages)  # Если номер страницы больше общего количества страниц — возвращаем последнюю
-    return render(request, 'post/list.html', {'page': page, 'posts': posts})
+    return render(request, 'post/list.html', {'page': page, 'posts': posts, 'tag': tag})
 
 
 # Постраничное отображение работает следующим образом:
