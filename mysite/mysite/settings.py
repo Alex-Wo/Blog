@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',  # Подсистема сообщений
     'django.contrib.staticfiles',  # Подсистема для управления статическим содержимым сайта
     'blog.apps.BlogConfig',  # Класс BlogConfig - это конфигурация приложения. Теперь Django сможет загрузить его модели
+    'taggit'
 ]
 
 

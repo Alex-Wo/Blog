@@ -10,6 +10,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.urls import reverse
+from taggit.managers import TaggableManager
 
 
 # Модель данных для статей блога.
@@ -44,6 +45,7 @@ class Post(models.Model):
                               default='draft')  # Поле отображения статуса статьи. Параметр CHOICES ограничивает возможные значения из указанного списка.
     objects = models.Manager()  # Менеджер по умолчанию
     published = PublishedManager()  # Новый менеджер
+    tags = TaggableManager()
 
     class Meta:
         ordering = (
