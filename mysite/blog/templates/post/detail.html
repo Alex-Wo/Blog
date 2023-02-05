@@ -1,4 +1,4 @@
-<!--Отображение содержимого статьи-->
+<!-- Отображение содержимого статьи -->
 
 {% extends "blog/base.html" %}
 {% block title %}{{ post.title }}{% endblock %}
@@ -9,4 +9,30 @@
 <p>
     <a href="{% url 'blog:post_share' post.id %}">Отправить по E-mail</a>
 </p>
+{% with comments.count as total_comments %}  <!-- Выполняя 'comments.count()', мы используем Django ORM в шаблоне -->
+    <h2>{{ total_comments }} comment{{ total_comments|pluralize }}</h2>
+{% endwith %}
+<!-- Добавляем список комментариев -->
+{% for comment in comments %}
+    <div class="comment">
+        <p class="info">
+            Комментарий {{ forloop.counter }} от {{ comment.name }}
+            {{ comment.created }}
+        </p>
+        {{ comment.body|linebreaks }}
+    </div>
+{% empty %}
+    <p>Комментариев пока нет.</p>
+{% endfor %}
+<!-- Фрагмент, отображающий форму или сообщение об успешно созданном комментарии -->
+{% if new_comment %}
+    <h2>Ваш комментарий добавлен!</h2>
+{% else %}
+    <h2>Добавить комментарий</h2>
+    <form action="." method="post">
+        {{ comment_form.as_p }}
+        {% csrf_token %}
+        <p><input type="submit" value="Добавить"></p>
+    </form>
+{% endif %}
 {% endblock %}
