@@ -19,7 +19,6 @@ load_dotenv(find_dotenv())
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
@@ -31,8 +30,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Приложения, активные на нашем сайте
+
+SITE_ID = 1  # Идентификатор сайта
 
 INSTALLED_APPS = [
     'django.contrib.admin',  # Сайт администрирования
@@ -42,9 +42,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',  # Подсистема сообщений
     'django.contrib.staticfiles',  # Подсистема для управления статическим содержимым сайта
     'blog.apps.BlogConfig',  # Класс BlogConfig - это конфигурация приложения. Теперь Django сможет загрузить его модели
-    'taggit'
+    'taggit',
+    'django.contrib.sites',
+    'django.contrib.sitemaps',
 ]
-
 
 # Список подключённых промежуточных слоёв
 
@@ -57,7 +58,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
 
 # Указывает на Python-модуль, который содержит корневые шаблоны URL'ов приложения
 
@@ -81,7 +81,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'mysite.wsgi.application'
 
-
 # Используемые базы данных, представляющие собой словарь, содержащий настройки для всех баз данных проекта
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
@@ -91,7 +90,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -111,7 +109,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -122,7 +119,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
