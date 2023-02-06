@@ -1,11 +1,12 @@
 <!-- Отображение содержимого статьи -->
 
 {% extends "blog/base.html" %}
+{% load blog_tags %}
 {% block title %}{{ post.title }}{% endblock %}
 {% block content %}
     <h1>{{ post.title }}</h1>
     <p class="date">Опубликовано {{ post.publish }} пользователем {{ post.author }}</p>
-    {{ post.body|linebreaks }}
+    {{ post.body|markdown }}
 <p>
     <a href="{% url 'blog:post_share' post.id %}">Отправить по E-mail</a>
 </p>
@@ -15,7 +16,7 @@
     <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
 </p>
 {% empty %}
-    There are no similar posts yet.
+    Подобных постов пока нет.
 {% endfor %}
 {% with comments.count as total_comments %}  <!-- Выполняя 'comments.count()', мы используем Django ORM в шаблоне -->
     <h2>{{ total_comments }} comment{{ total_comments|pluralize }}</h2>

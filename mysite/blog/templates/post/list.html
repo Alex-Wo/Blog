@@ -1,9 +1,10 @@
 {% extends "blog/base.html" %}  <!--Указываем, что list.html унаследован от базового шаблона base.html-->
+{% load blog_tags %}
 {% block title %}My blog{% endblock %}
 {% block content %}
 <h1>Мои статьи</h1>
 {% if tag %}
-    <h2>Posts tagged with "{{ tag.name }}"</h2>
+    <h2>Статьи с тегом "{{ tag.name }}"</h2>
 {% endif %}
 {% for post in posts %}
 <h2>
@@ -19,7 +20,7 @@
     {% endfor %}
 </p>
 <p class="date">Опубликовано {{ post.publish }} пользователем {{ post.author }}</p>
-{{ post.body|truncatewords:30|linebreaks }}
+{{ post.body|markdown|truncatewords_html:30 }}
 {% endfor %}
 {% include "pagination.html" with page=posts %}  <!--Подключаем пагинатор (постраничное отображение)-->
 {% endblock %}

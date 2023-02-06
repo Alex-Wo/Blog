@@ -1,6 +1,8 @@
 from django import template
 from ..models import Post
 from django.db.models import Count
+from django.utils.safestring import mark_safe
+import markdown
 
 register = template.Library()
 
@@ -33,3 +35,13 @@ def get_most_commented_posts(count=5):
         вычислений.
     """
     return Post.published.annotate(total_comments=Count('comments')).order_by('-total_comments')[:count]
+
+
+@register.filter(name='markdown')
+def markdown_format(text):
+    """
+        Регистрация фильтра Markdown.
+        Он необходим для того, чтобы добавить возможность заполнять тело статьи с помощью форматирования Markdown,
+        которое будет формировать корректный HTML при отображении статьи.
+    """
+    return mark_safe(markdown.markdown(text))
